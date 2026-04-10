@@ -1,6 +1,7 @@
 package com.sms.backend.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "users")
@@ -10,9 +11,16 @@ public class User {
     private String id;
 
     private String name;
+
+    @Indexed(unique = true)
     private String email;
+
     private String password;
     private String role;
+
+    // ✅ ADD THIS (for reset password)
+    private String resetToken;
+    private Long resetTokenExpiry;
 
     public User() {
     }
@@ -24,6 +32,8 @@ public class User {
         this.password = password;
         this.role = role;
     }
+
+    // ===== GETTERS & SETTERS =====
 
     public String getId() {
         return id;
@@ -63,5 +73,23 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    // ✅ NEW GETTERS/SETTERS
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public Long getResetTokenExpiry() {
+        return resetTokenExpiry;
+    }
+
+    public void setResetTokenExpiry(Long resetTokenExpiry) {
+        this.resetTokenExpiry = resetTokenExpiry;
     }
 }

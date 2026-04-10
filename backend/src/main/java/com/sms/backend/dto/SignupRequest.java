@@ -1,12 +1,21 @@
 package com.sms.backend.dto;
 
-public class LoginRequest {
+public class SignupRequest {
 
+    private String name;
     private String email;
     private String password;
     private String role;
 
-    public LoginRequest() {
+    public SignupRequest() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {

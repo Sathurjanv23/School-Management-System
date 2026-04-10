@@ -35,12 +35,18 @@ export default function ParentPage() {
         const marksData = await getAllMarks();
         const announcementData = await getAllAnnouncements();
 
-        const filteredAttendance = (attendanceData || []).filter(
-          (item: any) => item.studentName === user.name
+        console.log("USER =", user);
+        console.log("ATTENDANCE =", attendanceData);
+        console.log("MARKS =", marksData);
+
+        const filteredAttendance = (attendanceData || []).filter((item: any) =>
+          item.studentName?.trim().toLowerCase() ===
+          user.name?.trim().toLowerCase()
         );
 
-        const filteredMarks = (marksData || []).filter(
-          (item: any) => item.studentName === user.name
+        const filteredMarks = (marksData || []).filter((item: any) =>
+          item.studentName?.trim().toLowerCase() ===
+          user.name?.trim().toLowerCase()
         );
 
         setAttendanceList(filteredAttendance);
@@ -204,9 +210,9 @@ export default function ParentPage() {
 
             <div className="grid gap-4">
               {announcements.length > 0 ? (
-                announcements.map((item) => (
+                announcements.map((item, index) => (
                   <div
-                    key={item.id}
+                    key={item.id || index}
                     className="rounded-2xl border border-white/10 bg-white/5 p-5 hover:bg-white/10 transition"
                   >
                     <h4 className="text-lg font-semibold text-emerald-300">
@@ -246,9 +252,9 @@ export default function ParentPage() {
                 </thead>
                 <tbody>
                   {attendanceList.length > 0 ? (
-                    attendanceList.map((item) => (
+                    attendanceList.map((item, index) => (
                       <tr
-                        key={item.id}
+                        key={item.id || index}
                         className="bg-white/5 hover:bg-white/10 transition"
                       >
                         <td className="rounded-l-2xl px-4 py-4 font-medium">
@@ -308,9 +314,9 @@ export default function ParentPage() {
                 </thead>
                 <tbody>
                   {marksList.length > 0 ? (
-                    marksList.map((item) => (
+                    marksList.map((item, index) => (
                       <tr
-                        key={item.id}
+                        key={item.id || index}
                         className="bg-white/5 hover:bg-white/10 transition"
                       >
                         <td className="rounded-l-2xl px-4 py-4 font-medium">

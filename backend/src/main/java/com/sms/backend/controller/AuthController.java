@@ -1,46 +1,89 @@
 package com.sms.backend.controller;
 
-import com.sms.backend.config.JwtUtil;
-import com.sms.backend.dto.LoginRequest;
-import com.sms.backend.dto.RegisterRequest;
-import com.sms.backend.model.User;
-import com.sms.backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.sms.backend.dto.ForgotPasswordRequest;
+import com.sms.backend.dto.LoginRequest;
+import com.sms.backend.dto.LoginResponse;
+import com.sms.backend.dto.ResetPasswordRequest; // ✅ ADD THIS
+import com.sms.backend.dto.SignupRequest;
+import com.sms.backend.dto.SignupResponse;
+import com.sms.backend.service.AuthService;
 
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
-    @Autowired
-    private UserService userService;
+    private final AuthService authService;
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @PostMapping("/register")
-    public User register(@RequestBody RegisterRequest request) {
-        return userService.registerUser(request);
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/login")
-    public Object login(@RequestBody LoginRequest request) {
-        User user = userService.loginUser(request);
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        try {
+            LoginResponse response = authService.login(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+    }
 
-        if (user == null) {
-            return "Invalid email, password, or role";
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
+        try {
+            SignupResponse response = authService.signup(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        try {
+            String message = authService.forgotPassword(request);
+            return ResponseEntity.ok(new ErrorResponse(message));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    // ✅ NEW RESET PASSWORD ENDPOINT
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
+        try {
+            String message = authService.resetPassword(request);
+            return ResponseEntity.ok(new ErrorResponse(message));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    public static class ErrorResponse {
+        private String message;
+
+        public ErrorResponse() {
         }
 
-        String token = jwtUtil.generateToken(user.getEmail());
+        public ErrorResponse(String message) {
+            this.message = message;
+        }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("user", user);
-        response.put("token", token);
+        public String getMessage() {
+            return message;
+        }
 
-        return response;
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 }

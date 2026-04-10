@@ -17,21 +17,39 @@ public class UserService {
 
     public User registerUser(RegisterRequest request) {
         User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
-        user.setRole(request.getRole());
+        user.setName(request.getName().trim());
+        user.setEmail(request.getEmail().toLowerCase().trim());
+        user.setPassword(request.getPassword().trim());
+        user.setRole(request.getRole().toUpperCase().trim());
 
         return userRepository.save(user);
     }
 
     public User loginUser(LoginRequest request) {
-        Optional<User> user = userRepository.findByEmailAndPasswordAndRole(
-                request.getEmail(),
-                request.getPassword(),
-                request.getRole()
-        );
+        String email = request.getEmail().toLowerCase().trim();
+        String password = request.getPassword().trim();
 
-        return user.orElse(null);
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        if (optionalUser.isEmpty()) {
+            System.out.println("No user found for email: " + email);
+            return null;
+        }
+
+        User user = optionalUser.get();
+
+        System.out.println("DB EMAIL: " + user.getEmail());
+        System.out.println("DB PASSWORD: " + user.getPassword());
+        System.out.println("DB ROLE: " + user.getRole());
+
+        System.out.println("REQ EMAIL: " + email);
+        System.out.println("REQ PASSWORD: " + password);
+
+        if (!user.getPassword().trim().equals(password)) {
+            System.out.println("Password mismatch");
+            return null;
+        }
+
+        return user;
     }
 }
