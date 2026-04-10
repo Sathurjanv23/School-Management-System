@@ -1,0 +1,59 @@
+# ========================
+# Node / Frontend
+# ========================
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+.next/
+out/
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Env files (IMPORTANT 🔥)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ========================
+# Spring Boot (Java)
+# ========================
+target/
+*.jar
+*.war
+*.class
+
+# IntelliJ / VSCode
+.idea/
+*.iml
+.vscode/
+
+# ========================
+# OS files
+# ========================
+.DS_Store
+Thumbs.db
+
+# ========================
+# Coverage
+# ========================
+coverage/
+
+# ========================
+# Vercel / Deployment
+# ========================
+.vercel/
+
+# ========================
+# TypeScript
+# ========================
+*.tsbuildinfo
+next-env.d.ts
